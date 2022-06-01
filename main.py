@@ -13,6 +13,7 @@ def get_activities(access_token, params):
     return activities_df[['name', 'distance', 'moving_time', 'elapsed_time', 'total_elevation_gain', 'type', 'start_date', 'average_speed']]
 
 def change_units(df):
+    """ Converts distances to km and speeds to km/h """
     df.rename(columns = {'average_speed':'moving_speed', 'total_elevation_gain':'elevation_gain'}, inplace = True)
     df["distance"] = df["distance"] / 1000
     df["moving_speed"] = df["moving_speed"] * 3.6
@@ -28,6 +29,7 @@ def add_new_columns(df):
 def main():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     access_token = get_access_token(config.token_request_params)
+
     activities_df = get_activities(access_token, config.activities_request_params)
     activities_df = change_units(activities_df)
     activities_df = add_new_columns(activities_df)

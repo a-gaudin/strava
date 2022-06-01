@@ -4,11 +4,27 @@ def get_access_token(params):
     res = requests.post(auth_url, data=params, verify=False)
     return res.json()['access_token']
 
-def get_activities(access_token, params):
+def get_activities(access_token):
     """ Returns a dataframe of Strava activities """
     activites_url = "https://www.strava.com/api/v3/athlete/activities"
     header = {'Authorization': 'Bearer ' + access_token}
-    activities_json = requests.get(activites_url, headers=header, params=params).json()
+
+    run_new_request = True
+    page = 1
+    activities_json= []
+
+    while run_new_request == True:
+        params = {
+            'per_page': config.request_batch_size,
+            'page': page
+        }
+        new_activities_json = requests.get(activites_url, headers=header, params=params).json()
+        activities_json += new_activities_json
+        page += 1
+
+        if len(new_activities_json) < config.request_batch_size:
+            run_new_request = False
+
     activities_df = pd.json_normalize(activities_json)
     return activities_df[['name', 'distance', 'moving_time', 'elapsed_time', 'total_elevation_gain', 'type', 'start_date', 'average_speed']]
 
@@ -30,11 +46,12 @@ def main():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     access_token = get_access_token(config.token_request_params)
 
-    activities_df = get_activities(access_token, config.activities_request_params)
+    activities_df = get_activities(access_token)
     activities_df = change_units(activities_df)
     activities_df = add_new_columns(activities_df)
 
     pd.set_option('display.max_columns', None)
+    print(activities_df.shape)
     print(activities_df.head())
     
 if __name__ == "__main__":

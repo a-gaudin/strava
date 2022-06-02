@@ -1,3 +1,6 @@
+from pandas import pivot_table
+
+
 def get_access_token(params):
     """ Returns an access token from Strava """
     auth_url = "https://www.strava.com/oauth/token"
@@ -33,6 +36,7 @@ def change_units(df):
     df.rename(columns = {'average_speed':'moving_speed', 'total_elevation_gain':'elevation_gain'}, inplace = True)
     df["distance"] = df["distance"] / 1000
     df["moving_speed"] = df["moving_speed"] * 3.6
+    df["start_date"] = pd.to_datetime(df["start_date"])
     return df
 
 def add_new_columns(df):
@@ -40,7 +44,16 @@ def add_new_columns(df):
     df["speed"] = df["distance"] / (df["elapsed_time"] / 3600)
     df["grade_adjusted_speed"] = (df["distance"] + (df["elevation_gain"] / 1000)) / (df["elapsed_time"] / 3600)
     df["average_slope"] = (df["elevation_gain"] / (df["distance"] / 2 * 1000)) * 100
+    df["month"] = df["start_date"].dt.to_period('M')
+    df["year"] = df["start_date"].dt.to_period('Y')
     return df
+
+def get_summary(df):
+    """ Returns a pivot table dataframe that summarizes the activities """
+    pivot_table = pd.pivot_table(df, values=['distance', 'elapsed_time', 'elevation_gain'],
+                                index=['month'], columns=['type'], aggfunc=np.sum, fill_value=0)
+    #pivot_table = pivot_table.sort_values(by="month", ascending=False).index
+    return pivot_table #[["Run", "Bike"]]
 
 def main():
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -53,11 +66,14 @@ def main():
     pd.set_option('display.max_columns', None)
     print(activities_df.shape)
     print(activities_df.head())
+
+    summary_df = get_summary(activities_df)
+    print(summary_df.head())
     
 if __name__ == "__main__":
     import config
     import requests
     import urllib3
     import pandas as pd
-
+    import numpy as np
     main()

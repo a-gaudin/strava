@@ -1,5 +1,8 @@
-from pandas import pivot_table
-
+import config
+import requests
+import urllib3
+import pandas as pd
+import numpy as np
 
 def get_access_token(params):
     """ Returns an access token from Strava """
@@ -71,9 +74,4 @@ def main():
     print(summary_df.head())
     
 if __name__ == "__main__":
-    import config
-    import requests
-    import urllib3
-    import pandas as pd
-    import numpy as np
     main()

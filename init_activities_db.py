@@ -22,6 +22,8 @@ def add_new_columns(df):
 
 def main():
     activities_df = strava_api.get_activities()
+    activities_df = activities_df[['id', 'name', 'distance', 'moving_time', 'elapsed_time',
+                    'total_elevation_gain', 'type', 'start_date', 'average_speed']]
     activities_df = change_units(activities_df)
     activities_df = add_new_columns(activities_df)
 
@@ -30,6 +32,7 @@ def main():
     pd.set_option('display.max_columns', None)
     print(activities_df.shape)
     print(activities_df.head())
+    print("Saved ./db/activities")
     
 if __name__ == "__main__":
     main()

@@ -9,9 +9,10 @@ def get_summary(df):
     # pivot_table = pd.to_datetime(pivot_table["sum"]["elapsed_time"]["Run"], unit='s').dt.time
     return pivot_table
 
-# def main():
-    # summary_df = get_summary(activities_df)
-    # print(summary_df.head(10)) 
+def main():
+    activities_df = pd.read_pickle('./db/activities_load.pkl')
+    summary_df = get_summary(activities_df)
+    print(summary_df.head(10)) 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()

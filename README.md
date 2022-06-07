@@ -1,11 +1,12 @@
 # Strava logs insights
 Visualize trainings logs from a Strava account (https://www.strava.com/)
 
-* Languages: Python
-* Library: Pandas
+* Language: Python
+* Libraries: Pandas, Scikit-learn
 
 ## Instructions:
-1. Fill in API request parameters in a config.py file, 
+1. Activate the Strava API with ```read-all``` access
+2. Add a ```config.py``` file to fill in API request parameters, such as
 ```
 token_request_params = {
     'client_id': "CLIENT_ID_TBD",
@@ -15,9 +16,8 @@ token_request_params = {
     'f': 'json'
 }
 
-activities_request_params = {
-    'per_page': 200,
-    'page': 1
-}
+request_batch_size = 200 # limit is 200
 ```
-2. Run main.py
+2. Run ```init_activities_db.py``` to extract all your Strava activities into a pickle database
+3. Run ```init_activities_load.py``` to add soreness and injury to the pickle database
+4. Run ```view.py``` to visualize 

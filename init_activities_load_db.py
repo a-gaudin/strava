@@ -63,7 +63,6 @@ def add_soreness(df):
     df = pd.concat([df, soreness_df], axis=1)
     return df
 
-
 def main():
     activities_df = pd.read_pickle('./db/activities.pkl')
     activities_df = add_load(activities_df)

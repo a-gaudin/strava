@@ -1,5 +1,13 @@
 import pandas as pd
+import config
 import strava_api
+
+def activities_with_notes(df):
+    """ Extract the activities after a certain date where soreness/injury
+        notes were logged in Strava """
+    if config.notes_start_date:
+        df = df[pd.to_datetime(df["start_date"]) > config.notes_start_date]
+    return df
 
 def get_load(id):
     """ Returns a dictionary with rates of perceived exertion and notes
@@ -65,6 +73,7 @@ def add_soreness(df):
 
 def main():
     activities_df = pd.read_pickle('./db/activities.pkl')
+    activities_df = activities_with_notes(activities_df)
     activities_df = add_load(activities_df)
     activities_df = add_soreness(activities_df)
     

@@ -20,4 +20,4 @@ request_batch_size = 200 # limit is 200
 ```
 2. Run ```activities_db.py``` to extract all your Strava activities into a pickle database
 3. Run ```load_soreness_dbs.py``` to add soreness and injury to the pickle database
-4. Run ```pivot_table.py``` to visualize 
+4. Run ```pivot_table.py``` to get a summary of all activities 

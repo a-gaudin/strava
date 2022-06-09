@@ -54,9 +54,15 @@ def add_injuries(df):
     df = pd.concat([df, injury_df], axis=1)
     return df
 
+def add_injury_score(df, bodypart_number):
+    """ Returns the last n columns (containing the injury ratings for each body part) """
+    df['injury_score'] = df.iloc[:, -bodypart_number:].sum(axis=1)
+    return df
+
 def main():
     activities_df = pd.read_pickle('./db/load.pkl')
     activities_df = add_injuries(activities_df)
+    activities_df = add_injury_score(activities_df, 12)
 
     activities_df.to_pickle('./db/injury.pkl')
 

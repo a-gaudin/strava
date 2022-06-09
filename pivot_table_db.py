@@ -14,14 +14,15 @@ def flatten(df):
     return df
 
 def main():
-    activities_df = pd.read_pickle('./db/activities_load.pkl')
+    activities_df = pd.read_pickle('./db/load.pkl')
     pivot_table_df = get_pivot_table(activities_df)
     pivot_table_df = flatten(pivot_table_df)
 
     pivot_table_df.to_pickle('./db/pivot_table.pkl')
 
     pd.set_option('display.max_columns', None)
-    print(pivot_table_df.head(10))
+    print(pivot_table_df.shape)
+    print(pivot_table_df.head(5))
 
 if __name__ == '__main__':
     main()

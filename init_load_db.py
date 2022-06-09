@@ -2,17 +2,11 @@ import pandas as pd
 import config
 import strava_api
 
-def activities_with_notes(df):
-    """ Extracts the activities after a certain date where soreness/injury
-        notes were logged in Strava """
-    if config.notes_start_date:
-        df = df[pd.to_datetime(df["start_date"]) > config.notes_start_date]
-    return df
-
 def get_load(id):
     """ Returns a dictionary with rates of perceived exertion and notes
         (that may contain soreness/pain information) """
     activity_json = strava_api.get_activity(id) 
+    print(f'Returned data for activity {id}')
     perceived_exertion = activity_json['perceived_exertion'] if 'perceived_exertion' in activity_json else float("NaN")
     note = activity_json['private_note'] if 'private_note' in activity_json else ''
     return {'perceived_exertion': perceived_exertion, 'note': note}
@@ -24,6 +18,13 @@ def add_load(df):
     df['note'] = [x['note'] for x in load_list]
 
     df['load'] = df['moving_time'] * df['perceived_exertion']
+    return df
+
+def activities_with_notes(df):
+    """ Extracts the activities after a certain date where soreness/injury
+        notes were logged in Strava """
+    if config.notes_start_date:
+        df = df[pd.to_datetime(df["start_date"]) > config.notes_start_date]
     return df
 
 def has_numbers(string_):
@@ -73,11 +74,14 @@ def add_soreness(df):
 
 def main():
     activities_df = pd.read_pickle('./db/activities.pkl')
-    activities_df = activities_with_notes(activities_df)
     activities_df = add_load(activities_df)
+
+    activities_df.to_pickle('./db/activities_load.pkl')
+
+    activities_df = activities_with_notes(activities_df)
     activities_df = add_soreness(activities_df)
     
-    activities_df.to_pickle('./db/activities_load.pkl')
+    activities_df.to_pickle('./db/activities_load_soreness.pkl')
 
     pd.set_option('display.max_columns', None)
     print(activities_df.shape)

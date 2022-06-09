@@ -19,5 +19,5 @@ token_request_params = {
 request_batch_size = 200 # limit is 200
 ```
 2. Run ```init_activities_db.py``` to extract all your Strava activities into a pickle database
-3. Run ```init_activities_load.py``` to add soreness and injury to the pickle database
+3. Run ```init_load_db.py``` to add soreness and injury to the pickle database
 4. Run ```view.py``` to visualize 

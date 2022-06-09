@@ -3,7 +3,7 @@ import config
 import strava_api
 
 def activities_with_notes(df):
-    """ Extract the activities after a certain date where soreness/injury
+    """ Extracts the activities after a certain date where soreness/injury
         notes were logged in Strava """
     if config.notes_start_date:
         df = df[pd.to_datetime(df["start_date"]) > config.notes_start_date]
@@ -18,7 +18,7 @@ def get_load(id):
     return {'perceived_exertion': perceived_exertion, 'note': note}
 
 def add_load(df):
-    """ Return the activity dataframe with information about training load """
+    """ Returns the activity dataframe with information about training load """
     load_list = [get_load(id) for id in df['id']]
     df['perceived_exertion'] = [x['perceived_exertion'] for x in load_list]
     df['note'] = [x['note'] for x in load_list]
@@ -83,5 +83,5 @@ def main():
     print(activities_df.shape)
     print(activities_df.head())
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -42,6 +42,7 @@ def get_activities():
             'page': page
         }
         new_activities_json = requests.get(activities_url, headers=header, params=params).json()
+        print(f'Strava API response message: {new_activities_json}')
         activities_json += new_activities_json
         page += 1
 

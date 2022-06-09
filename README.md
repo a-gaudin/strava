@@ -5,7 +5,7 @@ Visualize trainings logs from a Strava account (https://www.strava.com/)
 * Libraries: Pandas, Scikit-learn
 
 ## Instructions:
-1. Activate the Strava API with ```read-all``` access
+1. Activate the Strava API for your account with ```read-all``` access
 2. Add a ```config.py``` file to fill in API request parameters, such as
 ```
 token_request_params = {

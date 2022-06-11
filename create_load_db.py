@@ -20,7 +20,7 @@ def add_load(df):
     return df
 
 def main():
-    activities_df = pd.read_pickle('./db/activities.pkl')
+    activities_df = pd.read_pickle('./db/activity.pkl')
     activities_df = add_load(activities_df)
 
     activities_df.to_pickle('./db/load.pkl')

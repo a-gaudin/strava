@@ -67,7 +67,6 @@ def main():
 
     activities_df.to_pickle('./db/injury.pkl')
 
-    pd.set_option('display.max_columns', None)
     print(activities_df.shape)
     print(activities_df.head())
 

@@ -27,12 +27,11 @@ def main():
     activities_df = change_units(activities_df)
     activities_df = add_new_columns(activities_df)
 
-    activities_df.to_pickle('./db/activities.pkl')
+    activities_df.to_pickle('./db/activity.pkl')
 
-    pd.set_option('display.max_columns', None)
     print(activities_df.shape)
     print(activities_df.head())
-    print('Saved ./db/activities.pkl')
+    print('Saved ./db/activity.pkl')
     
 if __name__ == "__main__":
     main()

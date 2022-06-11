@@ -2,7 +2,7 @@
 Visualize trainings logs from a Strava account (https://www.strava.com/)
 
 * Language: Python
-* Libraries: Pandas, Scikit-learn
+* Libraries: Pandas, Maplotlib, Scikit-learn
 
 ## Instructions:
 1. Activate the Strava API for your account with ```read-all``` access
@@ -22,3 +22,4 @@ request_batch_size = 200 # limit is 200
 3. Run ```load_db.py``` to add load data (saved as ```.db/load.pkl```)
 3. Run ```injury_db.py``` to add soreness/injury data (saved as ```.db/injury.pkl```)
 4. Run ```pivot_table.py``` to get a summary of all running and cycling activities
+5. Run ```pivot_table_plot.py``` to plot the summary metrics

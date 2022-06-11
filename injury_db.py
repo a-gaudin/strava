@@ -61,6 +61,7 @@ def add_injury_score(df, bodypart_number):
 
 def main():
     activities_df = pd.read_pickle('./db/load.pkl')
+    activities_df = activities_with_notes(activities_df)
     activities_df = add_injuries(activities_df)
     activities_df = add_injury_score(activities_df, 12)
 

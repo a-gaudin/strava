@@ -5,48 +5,54 @@ import pandas as pd
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def get_access_token(params):
-    """ Returns an access token from Strava """
-    auth_url = 'https://www.strava.com/oauth/token'
-    res = requests.post(auth_url, data=params, verify=False)
-    return res.json()['access_token']
-
-def get_activity(id):
-    """ Returns a Strava activity's description """
-    access_token = get_access_token(config.token_request_params)
+class StravaAPI:
+    def __init__(self) -> None:
+        self.__activities_url = 'https://www.strava.com/api/v3/activities/'
+        self.header = self.__get_header()
     
-    activity_url = 'https://www.strava.com/api/v3/activities/' + str(id)
-    header = {'Authorization': 'Bearer ' + access_token}
-    params = {
-        'include_all_efforts': False
-    }
+    def __get_header(self) -> dict:
+        """ Get request header for Strava request
+        Returns:
+            (dict): request header
+        """
+        auth_url = 'https://www.strava.com/oauth/token'
+        res = requests.post(auth_url, data=config.token_request_params, verify=False)
+        access_token = res.json()['access_token']
+        return {'Authorization': f'Bearer {access_token}'}
 
-    activity_json = requests.get(activity_url, headers=header, params=params).json()
-
-    return activity_json
-
-def get_activities():
-    """ Returns a dataframe of all Strava activities """
-    access_token = get_access_token(config.token_request_params)
-
-    activities_url = 'https://www.strava.com/api/v3/athlete/activities'
-    header = {'Authorization': 'Bearer ' + access_token}
-
-    run_new_request = True
-    page = 1
-    activities_json= []
-
-    while run_new_request == True:
+    def get_activity(self, id:int) -> dict:
+        """ Get one Strava activity's data
+        Args:
+            id (int): Strava activity id
+        Returns:
+            (dict): JSON of the activity data
+        """
+        activity_url = self.__activities_url + str(id)
         params = {
-            'per_page': config.request_batch_size,
-            'page': page
+            'include_all_efforts': False
         }
-        new_activities_json = requests.get(activities_url, headers=header, params=params).json()
-        print(f'Strava API response message: {new_activities_json}')
-        activities_json += new_activities_json
-        page += 1
+        return requests.get(activity_url, headers=self.header, params=params).json()
 
-        if len(new_activities_json) < config.request_batch_size:
-            run_new_request = False
+    def get_all_activities(self) -> dict:
+        """ Get all Strava activities data
+        Returns:
+            (dict): JSON of all activities data
+        """
+        run_new_request = True
+        page = 1
+        activities_json = []
 
-    return pd.json_normalize(activities_json)
+        while run_new_request == True:
+            params = {
+                'per_page': config.request_batch_size,
+                'page': page
+            }
+            new_activities_json = requests.get(self.__activities_url, headers=self.header, params=params).json()
+            print(f'Strava API response message: {new_activities_json}')
+            activities_json += new_activities_json
+            page += 1
+
+            if len(new_activities_json) < config.request_batch_size:
+                run_new_request = False
+
+        return activities_json

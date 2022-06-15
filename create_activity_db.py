@@ -1,4 +1,4 @@
-import strava_api
+from strava_api import StravaAPI
 import pandas as pd
 
 def change_units(df):
@@ -21,7 +21,8 @@ def add_new_columns(df):
     return df
 
 def main():
-    activities_df = strava_api.get_activities()
+    activities_json = StravaAPI().get_all_activities()
+    activities_df = pd.json_normalize(activities_json)
     activities_df = activities_df[['id', 'name', 'distance', 'moving_time', 'elapsed_time',
                                 'total_elevation_gain', 'type', 'start_date', 'average_speed']]
     activities_df = change_units(activities_df)

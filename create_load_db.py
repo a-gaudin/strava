@@ -1,10 +1,10 @@
 import pandas as pd
-import strava_api
+from strava_api import StravaAPI
 
 def get_load(id):
     """ Returns a dictionary with rates of perceived exertion and notes
         (that may contain soreness/pain information) """
-    activity_json = strava_api.get_activity(id) 
+    activity_json = StravaAPI().get_activity(id) 
     print(f'Returned data for activity {id}')
     perceived_exertion = activity_json['perceived_exertion'] if 'perceived_exertion' in activity_json else float("NaN")
     note = activity_json['private_note'] if 'private_note' in activity_json else ''

@@ -7,16 +7,16 @@ from extract.strava_api import StravaAPI
 
 class Extract:
     def __init__(self) -> None:
-        self.save_new_activities()
+        self.db_activities_file_path = config.db_folder + config.db_activities_filename
+        self.db_new_activities_file_path = config.db_folder + config.db_new_activities_filename
     
     def __get_db_ids(self) -> Union[pd.DataFrame, None]:
-        """ Get all activity ids stored  in local db
+        """ Get all activity ids stored in local db
         Returns:
             Union[pd.DataFrame, None]: local db ids or None
         """
-        file_path = config.db_folder + config.db_activities_filename
-        if os.path.isfile(file_path):
-            df = pd.read_pickle(file_path)
+        if os.path.isfile(self.db_activities_file_path):
+            df = pd.read_pickle(self.db_activities_file_path)
             return df['id']
         else:
             return None
@@ -24,11 +24,12 @@ class Extract:
     def __get_new_ids(self) -> list:
         """ Get the ids of the new activities, which are not stored in a local db
         Returns:
-            (list): ids of new activities """
+            (list): ids of new activities
+        """
         all_strava_activities_df = pd.json_normalize(StravaAPI().get_all_activities())
         all_strava_ids_df = all_strava_activities_df['id']
         all_db_ids_df = self.__get_db_ids()
-        return list(set(all_strava_ids_df['id']) & set(all_db_ids_df['id']))
+        return list(set(all_strava_ids_df).difference(set(all_db_ids_df)))
 
     def __get_new_activities(self, ids: list) -> str:
         """ Get the data of the new activities, which are not stored in a local db
@@ -44,8 +45,17 @@ class Extract:
             all_new_activities += new_activity
         return all_new_activities
     
-    def save_new_activities(self):
+    def save_new_activities(self) -> None:
+        """ Save new activities as a pickle file.
+        If no new activities, delete a potential old pickle file
+        """
         new_ids = self.__get_new_ids()
-        new_activities = self.__get_new_activities(new_ids)
-        file_path = config.db_folder + config.db_new_activities_filename
-        new_activities.to_pickle(file_path)
+        if new_ids:
+            new_activities_json = self.__get_new_activities(new_ids)
+            new_activities_df = pd.json_normalize(new_activities_json)
+            new_activities_df.to_pickle(self.db_new_activities_file_path)
+        else:
+            try:
+                os.remove(self.db_new_activities_file_path)
+            except OSError:
+                pass

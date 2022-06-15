@@ -1,8 +1,13 @@
-from strava_api import StravaAPI
+from extract.strava_api import StravaAPI
 import pandas as pd
 
-def change_units(df):
-    """ Converts distances to km and speeds to km/h """
+def change_units(df: pd.DataFrame) -> pd.DataFrame:
+    """ Converts some units in Strava activities
+    Args:
+        df (pd.DataFrame): Strava activities with metric system units
+    Returns:
+        df (pd.DataFrame): Strava activities with new units (e.g. km, km/h)
+    """
     df.rename(columns = {'average_speed':'moving_speed', 
                         'total_elevation_gain':'elevation_gain'}, inplace = True)
     df["distance"] = df["distance"] / 1000
@@ -10,7 +15,13 @@ def change_units(df):
     df["start_date"] = pd.to_datetime(df["start_date"])
     return df
 
-def add_new_columns(df):
+def add_new_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """ Add additional information in Strava activities
+    Args:
+        df (pd.DataFrame): Strava activities
+    Returns:
+        df (pd.DataFrame): Strava activities with additional information
+    """
     df["elapsed_time_hhmmss"] = pd.to_datetime(df["elapsed_time"], unit='s').dt.time
     df["speed"] = df["distance"] / (df["elapsed_time"] / 3600)
     df["grade_adjusted_speed"] = (df["distance"] + (df["elevation_gain"] / 1000)) / (df["elapsed_time"] / 3600)

@@ -1,6 +1,7 @@
 import config
 import requests
 import urllib3
+import pandas as pd
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -19,23 +20,24 @@ class StravaAPI:
         access_token = res.json()['access_token']
         return {'Authorization': f'Bearer {access_token}'}
 
-    def get_activity(self, id:int) -> str:
+    def get_activity(self, id:int) -> pd.DataFrame:
         """ Get one Strava activity's data
         Args:
             id (int): Strava activity id
         Returns:
-            (str): JSON of the activity data
+            (str): df of the activity data
         """
         activity_url = self.__activities_url + str(id)
         params = {
             'include_all_efforts': False
         }
-        return requests.get(activity_url, headers=self.header, params=params).json()
+        activity_json = requests.get(activity_url, headers=self.header, params=params).json()
+        return activity_json
 
-    def get_all_activities(self) -> str:
+    def get_all_activities(self) -> pd.DataFrame:
         """ Get all Strava activities data
         Returns:
-            (str): JSON of all activities data
+            (str): df of all activities data
         """
         run_new_request = True
         page = 1

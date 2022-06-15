@@ -19,12 +19,12 @@ class StravaAPI:
         access_token = res.json()['access_token']
         return {'Authorization': f'Bearer {access_token}'}
 
-    def get_activity(self, id:int) -> dict:
+    def get_activity(self, id:int) -> str:
         """ Get one Strava activity's data
         Args:
             id (int): Strava activity id
         Returns:
-            (dict): JSON of the activity data
+            (str): JSON of the activity data
         """
         activity_url = self.__activities_url + str(id)
         params = {
@@ -32,10 +32,10 @@ class StravaAPI:
         }
         return requests.get(activity_url, headers=self.header, params=params).json()
 
-    def get_all_activities(self) -> dict:
+    def get_all_activities(self) -> str:
         """ Get all Strava activities data
         Returns:
-            (dict): JSON of all activities data
+            (str): JSON of all activities data
         """
         run_new_request = True
         page = 1

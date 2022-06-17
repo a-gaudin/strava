@@ -1,17 +1,25 @@
+# extract
 strava_request:
-  request_params: {
-    'client_id': "75389",
-    'client_secret': 'ed536e7e4b34b7046c87c2ea4ab19d5b2916c82e',
-    'refresh_token': 'a898970d810c84f649672e9dc8a6310f57763f0f',
-    'grant_type': 'refresh_token',
-    'f': 'json'
-  }
+  auth_url: 'https://www.strava.com/oauth/token'
+  activities_url: 'https://www.strava.com/api/v3/activities'
+  request_params:
+    access: {
+      'client_id': "75389",
+      'client_secret': 'ed536e7e4b34b7046c87c2ea4ab19d5b2916c82e',
+      'refresh_token': 'a898970d810c84f649672e9dc8a6310f57763f0f',
+      'grant_type': 'refresh_token',
+      'f': 'json'
+    }
+    activity: {
+      'include_all_efforts': False
+    }
   request_batch_size: 200 # limit is 200
-
-notes_start_date: '10/09/2021'
 
 db:
   extract:
     folder_path: './data_extract/db/'
     activities_file_name: 'activities.pkl'
-    new_activities_file_name: 'new_activities.pkl'
+
+# transform
+df_columns: ['id', 'name', 'distance', 'moving_time', 'elapsed_time', 'total_elevation_gain', 'type', 'start_date', 'average_speed']
+notes_start_date: '10/09/2021'

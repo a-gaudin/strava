@@ -1,13 +1,13 @@
 import pandas as pd
 from pathlib import Path
 
-import utils.helper_functions as help_fn
+from utils.helper_functions import get_config
 import utils.convert as convert
 
 class Transform:
     def __init__(self) -> None:
         """ Get transform config data """
-        self.cfg = help_fn.get_config()
+        self.cfg = get_config()
 
         self.cfg_db = self.cfg.db.transform
         self.db_folder_path = Path(self.cfg_db.folder_path)
@@ -15,6 +15,9 @@ class Transform:
 
         self.df_columns = self.cfg.activities_df_columns
         self.average_speed_col_new_name = self.cfg.average_speed_col_new_name
+
+        self.body_parts_singular = self.cfg.body_parts_singular
+        self.body_parts_plural = self.cfg.body_parts_plural
 
     def __refactor_speed_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Add speed informatino to df
@@ -34,29 +37,31 @@ class Transform:
                                     convert.seconds_to_hours(df["elapsed_time"])
         return df
     
-    def __add_injury_score(df):
-        """ Add a colum with an injury score, i.e. the sum of all the injury ratings """
-        for index, row in df[:,10].iterrows():
-            note_list = note.lower().split(',')
-            injury = 
-            
-            injury_plural = ['chevilles', 'genoux', 'hanches', 'cuisses', 'mollets', 'fessiers']
+    def __add_injury_score(self, df:pd.DataFrame) -> pd.DataFrame:
+        """ Add a colum with an injury score, i.e. the sum of all the injury ratings
+        Args:
+            df (pd.DataFrame): activities df
+        Returns:
+            df (pd.DataFrame): activities df with injury score
+        """
+        injury_score_list = []
+
+        for row in df.itertuples():
+            note_str = row[:,10]
+            note_list = note_str.lower().split(',')
+            injury_score = 0
             
             for note_el in note_list:
-                if has_numbers(note_el):
-                    rating = first_number(note_el)
-
-                    bodypart = two_first_words(note_el)
-                    if bodypart in injury:
-                        injury[bodypart] = rating
-
-                    bodypart_plural = first_word(note_el)
-                    if bodypart_plural in injury_plural:
-                        bodypart_singular = bodypart_plural[:-1]
-                        injury[bodypart_singular + ' gauche'] = rating
-                        injury[bodypart_singular + ' droite'] = rating
+                if note_el in self.body_parts_singular:
+                    injury_score += 1
+                
+                if note_el in self.body_parts_plural:
+                    injury_score += 2
+            
+            injury_score_list.append(injury_score)
         
-        return injury
+        df['injury_score'] = injury_score_list
+        return df
 
     def create_activities_db(self, df: pd.DataFrame) -> None:
         # Column indexes: 0. 'id', 1. 'name', 2. 'distance', 3. 'moving_time',

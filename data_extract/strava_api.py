@@ -1,4 +1,4 @@
-import config
+import conf.config as config
 import requests
 import urllib3
 import pandas as pd

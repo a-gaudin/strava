@@ -1,5 +1,5 @@
 import pandas as pd
-from extract.strava_api import StravaAPI
+from data_extract.strava_api import StravaAPI
 
 def get_load(id):
     """ Returns a dictionary with rates of perceived exertion and notes

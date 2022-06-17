@@ -1,4 +1,4 @@
-from extract.strava_api import StravaAPI
+from data_extract.strava_api import StravaAPI
 import pandas as pd
 
 def change_units(df: pd.DataFrame) -> pd.DataFrame:

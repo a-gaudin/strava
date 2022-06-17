@@ -1,6 +1,6 @@
-from extract.extract import Extract
+from data_extract.extract import Extract
 
-def main():
+def main() -> None:
     Extract().save_new_activities()
     print('hello')
 

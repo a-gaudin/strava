@@ -1,5 +1,5 @@
 import pandas as pd
-import config
+import conf.config as config
 
 def activities_with_notes(df):
     """ Extracts the activities after a certain date where soreness/injury

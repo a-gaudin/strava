@@ -18,8 +18,19 @@ strava_request:
 db:
   extract:
     folder_path: './data_extract/db/'
+    activities_file_name: 'strava_activities.pkl'
+  transform:
+    folder_path: './data_transform/db/'
     activities_file_name: 'activities.pkl'
+    summary_file_name: 'summary.pkl'
 
 # transform
-df_columns: ['id', 'name', 'distance', 'moving_time', 'elapsed_time', 'total_elevation_gain', 'type', 'start_date', 'average_speed']
-notes_start_date: '10/09/2021'
+activities_df_columns: ['id', 'name', 'distance', 'moving_time',
+  'elapsed_time', 'total_elevation_gain', 'type', 'start_date',
+  'average_speed', 'perceived_exertion', 'private_note']
+average_speed_col_new_name: 'moving_speed'
+body_parts: ['cheville gauche', 'cheville droite', 'genou gauche',
+  'genou droite', 'hanche gauche', 'hanche droite', 'cuisse gauche',
+  'cuisse droite', 'mollet gauche', 'mollet droite', 'fessier gauche',
+  'fessier droite']
+# notes_start_date: '10/09/2021'

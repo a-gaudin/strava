@@ -12,7 +12,6 @@ class Extract:
         self.cfg_db = self.cfg.db.extract
         self.db_folder_path = Path(self.cfg_db.folder_path)
         self.activities_db_path = self.db_folder_path / self.cfg_db.activities_file_name
-        self.new_activities_db_path = self.db_folder_path / self.cfg_db.new_activities_file_name
     
     def __get_local_ids(self) -> Union[pd.DataFrame, None]:
         """ Get all activity ids stored in local db
@@ -52,7 +51,7 @@ class Extract:
             all_new_activities.append(new_activity)
         return all_new_activities
 
-    def update_activities_db(self) -> None:
+    def update_strava_activities_db(self) -> None:
         """ Add new Strava which are not already stored locally """
         self.db_folder_path.mkdir(parents=True, exist_ok=True)
 
@@ -62,7 +61,7 @@ class Extract:
             new_activities_df = pd.json_normalize(new_activities_json)
 
             if self.activities_db_path.is_file():
-                local_activities_df = pd.read_pickle(self.activities_db_path)  
+                local_activities_df = pd.read_pickle(self.activities_db_path)
                 activities_df = pd.concat([local_activities_df, new_activities_df])
                 activities_df.to_pickle(self.activities_db_path)
             else:

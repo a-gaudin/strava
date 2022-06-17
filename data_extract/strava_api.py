@@ -9,7 +9,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 class StravaAPI:
     def __init__(self) -> None:
-        """ Init file paths """
+        """ Init request data """
         self.cfg = get_config().strava_request
         self.auth_url = self.cfg.auth_url
         self.activities_url = self.cfg.activities_url

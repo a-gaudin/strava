@@ -38,12 +38,12 @@ class Extract:
             if all_local_ids_df
             else list(set(all_strava_ids_df)) )
     
-    def __get_new_activities(self, ids: list) -> str:
+    def __get_new_activities(self, ids: list) -> list:
         """ Get the data of the new activities, which are not stored in a local db
         Args
             ids (list): ids to search for
         Results
-            all_new_activities (str): new activities as a JSON string
+            all_new_activities (list): new activities as a list of JSON
         """
         all_new_activities = []
         for id in ids:
@@ -53,9 +53,7 @@ class Extract:
         return all_new_activities
 
     def update_activities_db(self) -> None:
-        """ Save new activities as a pickle file.
-        If no new activities, delete a potential old pickle file
-        """
+        """ Add new Strava which are not already stored locally """
         self.db_folder_path.mkdir(parents=True, exist_ok=True)
 
         new_ids = self.__get_new_ids()

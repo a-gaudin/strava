@@ -56,7 +56,7 @@ class Extract:
         self.db_folder_path.mkdir(parents=True, exist_ok=True)
 
         new_ids = self.__get_new_ids()
-        if new_ids:
+        if new_ids or not self.activities_db_path.isfile():
             new_activities_json = self.__get_new_activities(new_ids)
             new_activities_df = pd.json_normalize(new_activities_json)
 

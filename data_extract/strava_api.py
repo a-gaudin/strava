@@ -36,7 +36,9 @@ class StravaAPI:
         """
         activity_url = self.activities_url + '/' +  str(id)
         params = self.activity_request_params
-        return requests.get(activity_url, headers=self.headers, params=params).json()
+        activity_json = requests.get(activity_url, headers=self.headers, params=params).json()
+        print(f'Strava API response message: {activity_json}')
+        return activity_json
 
     def get_all_activities(self) -> str:
         """ Get all Strava activities data

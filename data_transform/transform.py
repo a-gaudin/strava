@@ -18,6 +18,19 @@ class Transform:
 
         self.body_parts_singular = self.cfg.body_parts_singular
         self.body_parts_plural = self.cfg.body_parts_plural
+    
+    def __refactor_time_data(self, df: pd.DataFrame) -> pd.DataFrame:
+        """ Add time informatino to df
+        Args:
+            df (pd.DataFrame): activities df
+        Returns:
+            df (pd.DataFrame): activities df with new time information
+        """
+        df.iloc[:,7] = pd.to_datetime(df.iloc[:, 7])
+        df = df.sort_values(by=df.columns[7])
+        df["month"] = df.iloc[:, 7].dt.to_period('M')
+        df["year"] = df.iloc[:, 7].dt.to_period('Y')
+        return df
 
     def __refactor_speed_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Add speed informatino to df
@@ -83,19 +96,16 @@ class Transform:
         # 8. 'average_speed', 9. 'perceived_exertion', 10. 'private_note'
         df = extracted_df[self.df_columns]
 
-        df["average_slope"] = df.iloc[:,5] / (df.iloc[:,2] / 2) # Column idx: 11
-        df["moving_%"] = df.iloc[:,3] / df.iloc[:,4] # Column idx: 12
-        df["load"] = df.iloc[:,3] * df.iloc[:,9] # Column idx: 13
+        df["average_slope"] = df.iloc[:, 5] / (df.iloc[:, 2] / 2) # Column idx: 11,
+        df["moving_%"] = df.iloc[:, 3] / df.iloc[:, 4] # Column idx: 12. 'moving_%'
+        df["load"] = df.iloc[:, 3] * df.iloc[:, 9] # Column idx: 13. 'load'
 
-        df.iloc[:,2] = convert.meters_to_kilometers(df.iloc[:,2])
-        df.iloc[:,7] = pd.to_datetime(df.iloc[:,7])
+        df.iloc[:, 2] = convert.meters_to_kilometers(df.iloc[:, 2])
 
-        df["month"] = df.iloc[:,7].dt.to_period('M') # Column idx: 14
-        df["year"] = df.iloc[:,7].dt.to_period('Y') # Column idx: 15
-
+        df = self.__refactor_time_data(df) # Column idx: 14. 'month', 15. 'year
         df = self.__refactor_speed_data(df) # Column idx: 16. 'speed', 17. 'grade_adjusted_speed'
         
-        df.iloc[:,10] = df.iloc[:,10].fillna('')
+        df.iloc[:, 10] = df.iloc[:, 10].fillna('')
         df = self.__add_injury_scores(df) # Column idx: 18. 'injury_score'
         
         df.to_pickle(self.activities_db_path)

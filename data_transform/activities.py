@@ -4,7 +4,7 @@ from pathlib import Path
 import utils.helper_functions as help_fn
 import utils.convert as convert
 
-class Transform:
+class CreateActivities:
     def __init__(self) -> None:
         """ Get transform config data """
         self.cfg = help_fn.get_config()
@@ -33,7 +33,7 @@ class Transform:
         return df
 
     def __refactor_speed_data(self, df: pd.DataFrame) -> pd.DataFrame:
-        """ Add speed informatino to df
+        """ Add speed information to df
         Args:
             df (pd.DataFrame): activities df
         Returns:
@@ -86,6 +86,8 @@ class Transform:
                 note_list = note_str.lower().split(',')
                 injury_score = self.__get_injury_score(note_list)  
                 injury_score_list.append(injury_score)
+            else:
+                injury_score_list.append(0)
         
         df['injury_score'] = injury_score_list
         return df

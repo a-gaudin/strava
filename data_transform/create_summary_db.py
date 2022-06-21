@@ -1,7 +1,7 @@
 import pandas as pd
 
 def get_pivot_table(df):
-    """ Returns a pivot table dataframe that summarizes the activities """
+    """ Get a pivot table that summarizes the activities """
     df = df[df['type'].isin(['Run', 'Ride'])]
     df = pd.pivot_table(df, values=['distance', 'elapsed_time', 'elevation_gain', 'load'],
                         index=['month'], columns=['type'], aggfunc=['sum'], fill_value=0)

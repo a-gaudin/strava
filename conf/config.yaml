@@ -13,7 +13,9 @@ strava_request:
     activity: {
       'include_all_efforts': False
     }
-  request_batch_size: 200 # limit is 200
+  request_limits:
+    successive_calls: 80
+    batch_size: 200 # limit is 200
 
 db:
   extract:

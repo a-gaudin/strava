@@ -7,11 +7,13 @@ from data_extract.strava_api import StravaAPI
 
 class Extract:
     def __init__(self) -> None:
-        """ Init file paths """
+        """ Init file paths and rate limit """
         self.cfg = get_config()
         self.cfg_db = self.cfg.db.extract
         self.db_folder_path = Path(self.cfg_db.folder_path)
         self.activities_db_path = self.db_folder_path / self.cfg_db.activities_file_name
+
+        self.successive_calls = self.cfg.strava_request.request_limits.successive_calls
     
     def __get_local_ids(self) -> Union[pd.DataFrame, None]:
         """ Get all activity ids stored in local db
@@ -25,17 +27,19 @@ class Extract:
             return None
 
     def __get_new_ids(self) -> list:
-        """ Get the ids of the new activities, which are not stored in a local db
+        """ Get the ids of the new activities, which are not stored in a local db,
+        considering API rate limit
         Returns:
             (list): ids of new activities
         """
         all_strava_activities_df = pd.json_normalize(StravaAPI().get_all_activities())
         all_strava_ids_df = all_strava_activities_df['id']
         all_local_ids_df = self.__get_local_ids()
-        return (
+        all_new_ids = (
             list(set(all_strava_ids_df).difference(set(all_local_ids_df)))
             if all_local_ids_df
-            else list(set(all_strava_ids_df)) )
+            else list(set(all_strava_ids_df)))
+        return all_new_ids[:self.successive_calls]
     
     def __get_new_activities(self, ids: list) -> list:
         """ Get the data of the new activities, which are not stored in a local db
@@ -52,7 +56,7 @@ class Extract:
         return all_new_activities
 
     def update_strava_activities_db(self) -> None:
-        """ Add new Strava which are not already stored locally """
+        """ Add new Strava activities which are not already stored locally """
         self.db_folder_path.mkdir(parents=True, exist_ok=True)
 
         new_ids = self.__get_new_ids()

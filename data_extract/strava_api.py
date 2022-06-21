@@ -1,7 +1,5 @@
 import requests
 import urllib3
-import pandas as pd
-from pathlib import Path
 
 from utils.helper_functions import get_config
 
@@ -15,7 +13,7 @@ class StravaAPI:
         self.activities_url = self.cfg.activities_url
         self.access_request_params = self.cfg.request_params.access
         self.activity_request_params = self.cfg.request_params.activity
-        self.request_batch_size = self.cfg.request_batch_size
+        self.request_batch_size = self.cfg.request_limits.batch_size
         self.headers = self.__get_headers()
     
     def __get_headers(self) -> dict:

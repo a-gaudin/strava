@@ -80,7 +80,7 @@ class Transform:
         injury_score_list = []
 
         for row in df.itertuples():
-            note_str = row[10 + 1]
+            note_str = row[11] # In current row, 11th col = col number 10
 
             if note_str:
                 note_list = note_str.lower().split(',')

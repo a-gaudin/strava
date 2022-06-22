@@ -7,7 +7,7 @@ Visualize trainings logs from a [Strava](https://www.strava.com/) account and an
 ## Setup
 1. [Activate the Strava API](https://developers.strava.com/docs/getting-started/) for your account with ```read-all``` access
 2. Modify ```conf/config.yaml``` with your personal API client data
-3. Run ```main.py``` (extracts all your Strava activities)
+3. Run ```main.py```
 4. Analyse resulting pdf plots in ```data_plot/plots```
 
 ## Conclusions from my own Strava data

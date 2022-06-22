@@ -32,7 +32,7 @@ class StravaAPI:
         Returns:
             (str): json of the activity data
         """
-        activity_url = self.activities_url + '/' +  str(id)
+        activity_url = self.activities_url + '/' +  str(id) # should be a string as Strava API can't handle a Pathlib Path
         params = self.activity_request_params
         activity_json = requests.get(activity_url, headers=self.headers, params=params).json()
         print(f'Strava API response message: {activity_json}')

@@ -33,12 +33,13 @@ class Extract:
             (list): ids of new activities
         """
         all_strava_activities_df = pd.json_normalize(StravaAPI().get_all_activities())
-        all_strava_ids_df = all_strava_activities_df['id']
-        all_local_ids_df = self.__get_local_ids()
+        all_strava_ids = set(all_strava_activities_df['id'])
+        all_local_ids = set(self.__get_local_ids())
+
         all_new_ids = (
-            list(set(all_strava_ids_df).difference(set(all_local_ids_df)))
-            if all_local_ids_df
-            else list(set(all_strava_ids_df)))
+            list(all_strava_ids.difference(all_local_ids))
+            if list(all_local_ids)
+            else list(all_strava_ids))
         return all_new_ids[:self.successive_calls]
     
     def __get_new_activities(self, ids: list) -> list:

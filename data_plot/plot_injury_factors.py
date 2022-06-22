@@ -28,7 +28,7 @@ class PlotInjuryFactors:
         """
         df = df[::-1]  # reverse temporality
         corr_df = df.corr()
-        plt.figure(figsize=(11,6))
+        plt.figure(figsize=(13,6))
         sns.heatmap(corr_df, annot=True)
         plt.subplots_adjust(left=0.2, bottom=0.35)
         plt.savefig(self.correlations_file_path)
@@ -50,6 +50,10 @@ class PlotInjuryFactors:
         plt.close()
 
     def plot_injury_factors(self, activities_df: pd.DataFrame) -> None:
+        """ Save pdf files of injury related metrics
+        Args:
+            df (pd.DataFrame): activities
+        """
         print(activities_df.shape)
 
         self.__plot_correlations(activities_df)    

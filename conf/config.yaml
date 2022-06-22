@@ -49,6 +49,12 @@ df:
     injuries:
       notes_start_date: '10/09/2021'
       sports: ['Run']
+      rolling_features: [
+        {reference: 'injury_score', column_name: 'injury_last_week', days: 7},
+        {reference: 'injury_score', column_name: 'injury_last_month', days: 30},
+        {reference: 'load', column_name: 'load_last_week', days: 7},
+        {reference: 'load', column_name: 'load_last_month', days: 30}
+      ]
     summary:
       sports: ['Run', 'Ride']
       metrics: ['distance', 'elapsed_time', 'total_elevation_gain', 'load']
@@ -58,6 +64,6 @@ df:
     injuries:
       selected_features: ['distance', 'moving_time', 'total_elevation_gain' , 'moving_speed',
         'grade_adjusted_speed', 'moving_%', 'perceived_exertion', 'load',
-        'injury_last_1W']
+        'injury_last_week', 'injury_last_month', 'load_last_week', 'load_last_month']
       target_feature: 'injury_score'
       plot_title: 'Factors causing injuries/soreness while running'

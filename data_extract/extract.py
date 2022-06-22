@@ -40,7 +40,7 @@ class ExtractStravaData:
 
         all_new_ids = (
             list(all_strava_ids.difference(all_local_ids))
-            if list(all_local_ids)
+            if all_local_ids
             else list(all_strava_ids))
         return all_new_ids[:self.successive_calls]
     
@@ -57,13 +57,13 @@ class ExtractStravaData:
             print(f'Returned data for activity {id}')
             all_new_activities.append(new_activity)
         return all_new_activities
-
+    
     def update_strava_activities_db(self) -> None:
         """ Add new Strava activities which are not already stored locally """
         self.db_folder_path.mkdir(parents=True, exist_ok=True)
 
         new_ids = self.__get_new_ids()
-        if new_ids or not self.activities_db_path.isfile():
+        if new_ids or not self.activities_db_path.is_file():
             new_activities_json = self.__get_new_activities(new_ids)
             new_activities_df = pd.json_normalize(new_activities_json)
 
@@ -73,5 +73,4 @@ class ExtractStravaData:
                 activities_df.to_pickle(self.activities_db_path)
             else:
                 new_activities_df.to_pickle(self.activities_db_path)
-
       

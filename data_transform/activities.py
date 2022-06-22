@@ -111,4 +111,7 @@ class CreateActivities:
         df = self.__add_injury_scores(df) # Column idx: 18. 'injury_score'
         
         df.to_pickle(self.activities_db_path)
+
+        print(f'Activities shape: {df.shape}')
+        print(df.head())
         

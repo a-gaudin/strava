@@ -35,7 +35,7 @@ class StravaAPI:
         activity_url = self.activities_url + '/' +  str(id) # should be a string as Strava API can't handle a Pathlib Path
         params = self.activity_request_params
         activity_json = requests.get(activity_url, headers=self.headers, params=params).json()
-        print(f'Strava API response message: {activity_json}')
+        # print(f'Strava API response message: {activity_json}')
         return activity_json
 
     def get_all_activities(self) -> str:
@@ -54,7 +54,7 @@ class StravaAPI:
             }
             new_activities_json = requests.get(self.activities_url,
                 headers=self.headers, params=params).json()
-            print(f'Strava API response message: {new_activities_json}')
+            # print(f'Strava API response message: {new_activities_json}')
             activities_json += new_activities_json
             page += 1
 

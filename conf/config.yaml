@@ -26,6 +26,9 @@ db:
     activities_file_name: 'activities.pkl'
     summary_file_name: 'summary.pkl'
 
+df:
+  extract:
+    id_column_name: 'id'
 # transform
 activities_df_columns: ['id', 'name', 'distance', 'moving_time',
   'elapsed_time', 'total_elevation_gain', 'type', 'start_date',

@@ -24,6 +24,11 @@ db:
     folder_path: './data_transform/db/'
     activities_file_name: 'activities.pkl'
     summary_file_name: 'summary.pkl'
+  plot:
+    folder_path: './data_plot/plots/'
+    summary_file_name: 'summary.pdf'
+    correlations_file_name: 'correlations.pdf'
+    factors_file_name: 'factors.pdf'
 
 df:
   extract:

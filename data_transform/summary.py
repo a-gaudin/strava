@@ -2,7 +2,6 @@ import pandas as pd
 from pathlib import Path
 
 import utils.helper_functions as help_fn
-import utils.convert as convert
 
 class SummarizeActivities:
     def __init__(self) -> None:

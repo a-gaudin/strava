@@ -5,7 +5,7 @@ from pathlib import Path
 from utils.helper_functions import get_config
 from data_extract.strava_api import StravaAPI
 
-class Extract:
+class ExtractStravaData:
     def __init__(self) -> None:
         """ Get file paths, request rate limit, and id column name """
         self.cfg = get_config()

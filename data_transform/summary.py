@@ -13,10 +13,10 @@ class SummarizeActivities:
         self.db_folder_path = Path(self.cfg_db.folder_path)
         self.summary_db_path = self.db_folder_path / self.cfg_db.summary_file_name
 
-        self.summary_sports = self.cfg.summary.sports
-        self.summary_metrics = self.cfg.summary.metrics
-        self.summary_column = self.cfg.summary.column
-        self.summary_row = self.cfg.summary.row
+        self.summary_sports = self.cfg.df.transform.summary.sports
+        self.summary_metrics = self.cfg.df.transform.summary.metrics
+        self.summary_column = self.cfg.df.transform.summary.column
+        self.summary_row = self.cfg.df.transform.summary.row
     
     def __get_pivot_table(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Get a pivot table that summarizes the activities with load data

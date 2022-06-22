@@ -13,11 +13,11 @@ class CreateActivities:
         self.db_folder_path = Path(self.cfg_db.folder_path)
         self.activities_db_path = self.db_folder_path / self.cfg_db.activities_file_name
 
-        self.df_columns = self.cfg.activities_df_columns
-        self.average_speed_col_new_name = self.cfg.average_speed_col_new_name
+        self.df_columns = self.cfg.df.transform.activities.columns
+        self.average_speed_column_name = self.cfg.df.transform.activities.average_speed_column_name
 
-        self.body_parts_singular = self.cfg.body_parts_singular
-        self.body_parts_plural = self.cfg.body_parts_plural
+        self.body_parts_singular = self.cfg.df.transform.activities.body_parts.singular
+        self.body_parts_plural = self.cfg.df.transform.activities.body_parts.plural
     
     def __refactor_time_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Add time informatino to df
@@ -42,7 +42,7 @@ class CreateActivities:
         elapsed_time_hours_df = convert.seconds_to_hours(df.iloc[:,4])
         elevation_gain_km_df = convert.meters_to_kilometers(df.iloc[:,5])
 
-        df.rename(columns={ df.columns[8]: self.average_speed_col_new_name}, inplace = True)
+        df.rename(columns={ df.columns[8]: self.average_speed_column_name}, inplace = True)
         df.iloc[:,8] = convert.mps_to_kph(df.iloc[:,8])
 
         df["speed"] = df.iloc[:,2] / elapsed_time_hours_df

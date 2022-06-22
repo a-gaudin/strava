@@ -14,6 +14,10 @@ class PlotSummary:
         self.summary_db_path = self.db_folder_path / self.cfg_db.summary_file_name
 
     def plot_summary(self, pivot_table_df: pd.DataFrame) -> None:
+        """ Save a pdf plot of Strava activities
+        Args:
+            pivot_table_df (pd.DataFrame): pivot table summary of activities
+        """
         pivot_table_df = pivot_table_df[::-1]
 
         fig, axes = plt.subplots(nrows=2, ncols=2, constrained_layout=True)

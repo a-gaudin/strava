@@ -58,7 +58,8 @@ class SummarizeActivities:
         pivot_table_df = self.__flatten(pivot_table_df)
         # pivot_table_df = self.__add_grand_totals(pivot_table_df)
 
-        print(pivot_table_df)
+        pd.set_option('display.max_columns', None)
+        print(pivot_table_df.head(5))
 
         pivot_table_df.to_pickle(self.summary_db_path)
         

@@ -27,6 +27,7 @@ class CreateActivities:
             df (pd.DataFrame): activities df with new time information
         """
         df.iloc[:,7] = pd.to_datetime(df.iloc[:, 7])
+        df.set_index(df.columns[8], drop=False, inplace=True) # 8th column = colum index 7
         df = df.sort_values(by=df.columns[7])
         df["month"] = df.iloc[:, 7].dt.to_period('M')
         df["year"] = df.iloc[:, 7].dt.to_period('Y')
@@ -70,7 +71,7 @@ class CreateActivities:
         
         return injury_score
         
-    def __add_injury_scores(self, df:pd.DataFrame) -> pd.DataFrame:
+    def __add_injury_scores(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Add a colum with an injury score, i.e. the sum of all the injury ratings
         Args:
             df (pd.DataFrame): activities df
@@ -92,15 +93,30 @@ class CreateActivities:
         df['injury_score'] = injury_score_list
         return df
 
+    def __add_cumulative_injuries(self, df: pd.DataFrame) -> pd.DataFrame:
+        group_df1 = df.groupby(pd.Grouper(key="start_date", freq="1W"))
+        df['injury_score_cum1W'] = group_df1['injury_score'].cumsum()
+
+        group_df2 = df.groupby(pd.Grouper(key="start_date", freq="2W"))
+        df['injury_score_cum2W'] = group_df2['injury_score'].cumsum()
+
+        group_df3 = df.groupby(pd.Grouper(key="start_date", freq="1M"))
+        df['injury_score_cum1M'] = group_df3['injury_score'].cumsum()
+
+        # group_df2 = df.groupby(pd.TimeGrouper('1M'))
+        # group_df3 = df.groupby(pd.TimeGrouper('2M'))
+
+        return df
+
     def create_activities_db(self, extracted_df: pd.DataFrame) -> None:
         # Column indexes: 0. 'id', 1. 'name', 2. 'distance', 3. 'moving_time',
         # 4. 'elapsed_time', 5. 'total_elevation_gain', 6. 'type', 7. 'start_date',
         # 8. 'average_speed', 9. 'perceived_exertion', 10. 'private_note'
         df = extracted_df[self.df_columns]
 
-        df["average_slope"] = df.iloc[:, 5] / (df.iloc[:, 2] / 2) # Column idx: 11,
-        df["moving_%"] = df.iloc[:, 3] / df.iloc[:, 4] # Column idx: 12. 'moving_%'
-        df["load"] = df.iloc[:, 3] * df.iloc[:, 9] # Column idx: 13. 'load'
+        df['average_slope'] = df.iloc[:, 5] / (df.iloc[:, 2] / 2) # Column idx: 11,
+        df['moving_%'] = df.iloc[:, 3] / df.iloc[:, 4] # Column idx: 12. 'moving_%'
+        df['load'] = df.iloc[:, 3] * df.iloc[:, 9] # Column idx: 13. 'load'
 
         df.iloc[:, 2] = convert.meters_to_kilometers(df.iloc[:, 2])
 
@@ -109,9 +125,11 @@ class CreateActivities:
         
         df.iloc[:, 10] = df.iloc[:, 10].fillna('')
         df = self.__add_injury_scores(df) # Column idx: 18. 'injury_score'
+        df = self.__add_cumulative_injuries(df)
         
         df.to_pickle(self.activities_db_path)
 
         print(f'Activities shape: {df.shape}')
-        print(df.head())
+        pd.set_option('display.max_columns', None)
+        print(df.head(5))
         

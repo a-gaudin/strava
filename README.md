@@ -3,6 +3,7 @@ Visualize trainings logs from a [Strava](https://www.strava.com/) account and an
 
 * Language: Python
 * Libraries: Pandas, Maplotlib, Scikit-learn
+* Process: ELT
 
 ## Setup
 1. [Activate the Strava API](https://developers.strava.com/docs/getting-started/) for your account with ```read-all``` access

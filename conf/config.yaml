@@ -23,6 +23,7 @@ db:
   transform:
     folder_path: './data_transform/db/'
     activities_file_name: 'activities.pkl'
+    injuries_file_name: 'injuries.pkl'
     summary_file_name: 'summary.pkl'
   plot:
     folder_path: './data_plot/plots/'
@@ -45,6 +46,9 @@ df:
           'cuisse droite', 'mollet gauche', 'mollet droite', 'fessier gauche',
           'fessier droite']
         plural: ['chevilles', 'genoux', 'hanches', 'cuisses', 'mollets', 'fessiers']
+    injuries:
+      notes_start_date: '10/09/2021'
+      sports: ['Run']
     summary:
       sports: ['Run', 'Ride']
       metrics: ['distance', 'elapsed_time', 'total_elevation_gain', 'load']
@@ -52,10 +56,8 @@ df:
       row: 'month'
   plot:
     injuries:
-      notes_start_date: '10/09/2021'
-      sports: ['Run']
       selected_features: ['distance', 'moving_time', 'total_elevation_gain' , 'moving_speed',
         'grade_adjusted_speed', 'moving_%', 'perceived_exertion', 'load',
-        'injury_score_cum1W', 'injury_score_cum2W', 'injury_score_cum1M']
+        'injury_last_1W']
       target_feature: 'injury_score'
       plot_title: 'Factors causing injuries/soreness while running'

@@ -17,8 +17,6 @@ class PlotInjuryFactors:
         self.factors_file_path = self.db_folder_path / self.cfg_db.factors_file_name
 
         self.cfg_injuries = self.cfg.df.plot.injuries
-        self.notes_start_date = self.cfg_injuries.notes_start_date
-        self.sports = self.cfg_injuries.sports
         self.selected_features = self.cfg_injuries.selected_features
         self.target_feature = self.cfg_injuries.target_feature
         self.plot_title = self.cfg_injuries.plot_title
@@ -52,9 +50,6 @@ class PlotInjuryFactors:
         plt.close()
 
     def plot_injury_factors(self, activities_df: pd.DataFrame) -> None:
-        activities_df = activities_df[(activities_df.iloc[:, 7] > self.notes_start_date)] # filter out older activities without injury notes
-        activities_df = activities_df[activities_df.iloc[:, 6].isin(self.sports)]
-
         print(activities_df.shape)
 
         self.__plot_correlations(activities_df)    

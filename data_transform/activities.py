@@ -93,21 +93,6 @@ class CreateActivities:
         df['injury_score'] = injury_score_list
         return df
 
-    def __add_cumulative_injuries(self, df: pd.DataFrame) -> pd.DataFrame:
-        group_df1 = df.groupby(pd.Grouper(key="start_date", freq="1W"))
-        df['injury_score_cum1W'] = group_df1['injury_score'].cumsum()
-
-        group_df2 = df.groupby(pd.Grouper(key="start_date", freq="2W"))
-        df['injury_score_cum2W'] = group_df2['injury_score'].cumsum()
-
-        group_df3 = df.groupby(pd.Grouper(key="start_date", freq="1M"))
-        df['injury_score_cum1M'] = group_df3['injury_score'].cumsum()
-
-        # group_df2 = df.groupby(pd.TimeGrouper('1M'))
-        # group_df3 = df.groupby(pd.TimeGrouper('2M'))
-
-        return df
-
     def create_activities_db(self, extracted_df: pd.DataFrame) -> None:
         # Column indexes: 0. 'id', 1. 'name', 2. 'distance', 3. 'moving_time',
         # 4. 'elapsed_time', 5. 'total_elevation_gain', 6. 'type', 7. 'start_date',
@@ -125,7 +110,6 @@ class CreateActivities:
         
         df.iloc[:, 10] = df.iloc[:, 10].fillna('')
         df = self.__add_injury_scores(df) # Column idx: 18. 'injury_score'
-        df = self.__add_cumulative_injuries(df)
         
         df.to_pickle(self.activities_db_path)
 

@@ -16,10 +16,11 @@ class PlotInjuryFactors:
         self.correlations_file_path = self.db_folder_path / self.cfg_db.correlations_file_name
         self.factors_file_path = self.db_folder_path / self.cfg_db.factors_file_name
 
-        self.cfg_injuries = self.cfg.df.plot.injuries
-        self.selected_features = self.cfg_injuries.selected_features
-        self.target_feature = self.cfg_injuries.target_feature
-        self.plot_title = self.cfg_injuries.plot_title
+        self.selected_features = ['distance', 'moving_time', 'total_elevation_gain' , 'moving_speed',
+            'grade_adjusted_speed', 'moving_%', 'perceived_exertion', 'load',
+            'injury_last_week', 'injury_last_month', 'load_last_week', 'load_last_month']
+        self.target_feature = 'injury_score'
+        self.plot_title = 'Factors causing injuries/soreness while running'
     
     def __plot_correlations(self, df: pd.DataFrame) -> None:
         """ Save a pdf plot of correlations between features

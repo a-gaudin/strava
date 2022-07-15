@@ -14,8 +14,6 @@ class ExtractStravaData:
         self.activities_db_path = self.db_folder_path / self.cfg_db.activities_file_name
 
         self.successive_calls = self.cfg.strava_request.request_limits.successive_calls
-
-        self.id_column_name = self.cfg.df.extract.id_column_name
     
     def __get_local_ids(self) -> Union[pd.DataFrame, None]:
         """ Get all activity ids stored in local db
@@ -24,7 +22,7 @@ class ExtractStravaData:
         """
         if self.activities_db_path.is_file():
             df = pd.read_pickle(self.activities_db_path)
-            return df[self.id_column_name]
+            return df['id']
         else:
             return None
 
@@ -35,7 +33,7 @@ class ExtractStravaData:
             (list): ids of new activities
         """
         all_strava_activities_df = pd.json_normalize(StravaAPI().get_all_activities())
-        all_strava_ids = set(all_strava_activities_df[self.id_column_name])
+        all_strava_ids = set(all_strava_activities_df['id'])
         all_local_ids = set(self.__get_local_ids())
 
         all_new_ids = (

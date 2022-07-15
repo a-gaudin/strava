@@ -12,10 +12,10 @@ class SummarizeActivities:
         self.db_folder_path = Path(self.cfg_db.folder_path)
         self.summary_db_path = self.db_folder_path / self.cfg_db.summary_file_name
 
-        self.summary_sports = self.cfg.df.transform.summary.sports
-        self.summary_metrics = self.cfg.df.transform.summary.metrics
-        self.summary_column = self.cfg.df.transform.summary.column
-        self.summary_row = self.cfg.df.transform.summary.row
+        self.summary_sports = ['Run', 'Ride']
+        self.summary_metrics = ['distance', 'elapsed_time', 'total_elevation_gain', 'load']
+        self.summary_column = 'type'
+        self.summary_row = 'month'
     
     def __get_pivot_table(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Get a pivot table that summarizes the activities with load data
@@ -25,8 +25,8 @@ class SummarizeActivities:
             df (pd.DataFrame): pivot table summary of activities with load data
         """
         df = df[df[self.summary_column].isin(self.summary_sports)]
-        df = pd.pivot_table(df, values=self.summary_metrics, index=['month'],
-                            columns=['type'], aggfunc=['sum'], fill_value=0)
+        df = pd.pivot_table(df, values=self.summary_metrics, index=[self.summary_row],
+                            columns=[self.summary_column], aggfunc=['sum'], fill_value=0)
         df = df.sort_values(by=[self.summary_row], ascending=False)
         return df
 

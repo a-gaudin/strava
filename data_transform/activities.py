@@ -13,11 +13,16 @@ class CreateActivities:
         self.db_folder_path = Path(self.cfg_db.folder_path)
         self.activities_db_path = self.db_folder_path / self.cfg_db.activities_file_name
 
-        self.df_columns = self.cfg.df.transform.activities.columns
-        self.average_speed_column_name = self.cfg.df.transform.activities.average_speed_column_name
+        self.df_columns = ["id", "name", "distance", "moving_time",
+            "elapsed_time", "total_elevation_gain", "type", "start_date",
+            "average_speed", "perceived_exertion", "private_note"]
+        self.average_speed_column_name = "moving_speed"
 
-        self.body_parts_singular = self.cfg.df.transform.activities.body_parts.singular
-        self.body_parts_plural = self.cfg.df.transform.activities.body_parts.plural
+        self.body_parts_singular = ["cheville gauche", "cheville droite", "genou gauche",
+          "genou droite", "hanche gauche", "hanche droite", "cuisse gauche",
+          "cuisse droite", "mollet gauche", "mollet droite", "fessier gauche",
+          "fessier droite"]
+        self.body_parts_plural = ["chevilles", "genoux", "hanches", "cuisses", "mollets", "fessiers"]
     
     def __refactor_time_data(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Add time informatino to df
@@ -26,11 +31,11 @@ class CreateActivities:
         Returns:
             df (pd.DataFrame): activities df with new time information
         """
-        df.iloc[:,7] = pd.to_datetime(df.iloc[:, 7])
-        df.set_index(df.columns[8], drop=False, inplace=True) # 8th column = colum index 7
-        df = df.sort_values(by=df.columns[7])
-        df["month"] = df.iloc[:, 7].dt.to_period('M')
-        df["year"] = df.iloc[:, 7].dt.to_period('Y')
+        df["start_date"] = pd.to_datetime(df["start_date"])
+        df.set_index("start_date", drop=False, inplace=True)
+        df = df.sort_values(by=["start_date"])
+        df["month"] = df["start_date"].dt.to_period("M")
+        df["year"] = df["start_date"].dt.to_period("Y")
         return df
 
     def __refactor_speed_data(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -40,13 +45,13 @@ class CreateActivities:
         Returns:
             df (pd.DataFrame): activities df with new speed information
         """
-        elapsed_time_hours_df = convert.seconds_to_hours(df.iloc[:,4])
-        elevation_gain_km_df = convert.meters_to_kilometers(df.iloc[:,5])
+        elapsed_time_hours_df = convert.seconds_to_hours(df["elapsed_time"])
+        elevation_gain_km_df = convert.meters_to_kilometers(df["total_elevation_gain"])
 
-        df.rename(columns={ df.columns[8]: self.average_speed_column_name}, inplace = True)
-        df.iloc[:,8] = convert.mps_to_kph(df.iloc[:,8])
+        df.rename(columns={df.columns[8]: self.average_speed_column_name}, inplace = True)
+        df["average_speed"] = convert.mps_to_kph(df["average_speed"])
 
-        df["speed"] = df.iloc[:,2] / elapsed_time_hours_df
+        df["speed"] = df["distance"] / elapsed_time_hours_df
         df["grade_adjusted_speed"] = (df["distance"] + elevation_gain_km_df) / \
                                     convert.seconds_to_hours(df["elapsed_time"])
         return df
@@ -84,36 +89,36 @@ class CreateActivities:
             note_str = row[11] # In current row, 11th col = col number 10
 
             if note_str:
-                note_list = note_str.lower().split(',')
+                note_list = note_str.lower().split(",")
                 injury_score = self.__get_injury_score(note_list)  
                 injury_score_list.append(injury_score)
             else:
                 injury_score_list.append(0)
         
-        df['injury_score'] = injury_score_list
+        df["injury_score"] = injury_score_list
         return df
 
     def create_activities_db(self, extracted_df: pd.DataFrame) -> None:
-        # Column indexes: 0. 'id', 1. 'name', 2. 'distance', 3. 'moving_time',
-        # 4. 'elapsed_time', 5. 'total_elevation_gain', 6. 'type', 7. 'start_date',
-        # 8. 'average_speed', 9. 'perceived_exertion', 10. 'private_note'
+        # Column indexes: 0. "id", 1. "name", 2. "distance", 3. "moving_time",
+        # 4. "elapsed_time", 5. "total_elevation_gain", 6. "type", 7. "start_date",
+        # 8. "average_speed", 9. "perceived_exertion", 10. "private_note"
         df = extracted_df[self.df_columns]
 
-        df['average_slope'] = df.iloc[:, 5] / (df.iloc[:, 2] / 2) # Column idx: 11,
-        df['moving_%'] = df.iloc[:, 3] / df.iloc[:, 4] # Column idx: 12. 'moving_%'
-        df['load'] = df.iloc[:, 3] * df.iloc[:, 9] # Column idx: 13. 'load'
+        df["average_slope"] = df["total_elevation_gain"] / (df["distance"] / 2) # Column idx: 11,
+        df["moving_%"] = df["moving_time"] / df["elapsed_time"] # Column idx: 12. "moving_%"
+        df["load"] = df["moving_time"] * df["perceived_exertion"] # Column idx: 13. "load"
 
-        df.iloc[:, 2] = convert.meters_to_kilometers(df.iloc[:, 2])
+        df["distance"] = convert.meters_to_kilometers(df["distance"])
 
-        df = self.__refactor_time_data(df) # Column idx: 14. 'month', 15. 'year
-        df = self.__refactor_speed_data(df) # Column idx: 16. 'speed', 17. 'grade_adjusted_speed'
+        df = self.__refactor_time_data(df) # Column idx: 14. "month", 15. "year
+        df = self.__refactor_speed_data(df) # Column idx: 16. "speed", 17. "grade_adjusted_speed"
         
-        df.iloc[:, 10] = df.iloc[:, 10].fillna('')
-        df = self.__add_injury_scores(df) # Column idx: 18. 'injury_score'
+        df["private_note"] = df["private_note"].fillna("")
+        df = self.__add_injury_scores(df) # Column idx: 18. "injury_score"
         
         df.to_pickle(self.activities_db_path)
 
-        print(f'Activities shape: {df.shape}')
-        pd.set_option('display.max_columns', None)
+        print(f"Activities shape: {df.shape}")
+        pd.set_option("display.max_columns", None)
         print(df.head(5))
         

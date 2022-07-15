@@ -13,9 +13,14 @@ class CreateInjuries:
         self.injuries_db_path = self.db_folder_path / self.cfg_db.injuries_file_name
 
         self.cfg_injuries = self.cfg.df.transform.injuries
-        self.notes_start_date = self.cfg_injuries.notes_start_date
-        self.sports = self.cfg_injuries.sports
-        self.rolling_features = self.cfg_injuries.rolling_features
+        self.notes_start_date = '10/09/2021'
+        self.sports = ['Run']
+        self.rolling_features = [
+                {'reference': 'injury_score', 'column_name': 'injury_last_week', 'days': 7},
+                {'reference': 'injury_score', 'column_name': 'injury_last_month', 'days': 30},
+                {'reference': 'load', 'column_name': 'load_last_week', 'days': 7},
+                {'reference': 'load', 'column_name': 'load_last_month', 'days': 30}
+            ]
     
     def __add_cumulative_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """ Add cumulative injury and training load to injuries df
@@ -24,7 +29,7 @@ class CreateInjuries:
         Return
             df (pd.DataFrame): injuries with cumulative injuries data and cumulative training load data
         """
-        df.set_index(df.iloc[:, 7], inplace=True)
+        df.set_index(df["start_date"], inplace=True)
         for el in self.rolling_features:
             window = str(el.days) + 'D'
             df[el.column_name] = df[el.reference].rolling(window).sum()
@@ -35,8 +40,8 @@ class CreateInjuries:
         Args:
             df (pd.DataFrame): activities without rolling injury related metrics
         """
-        df = df[(df.iloc[:, 7] > self.notes_start_date)] # filter out older activities without injury notes
-        df = df[df.iloc[:, 6].isin(self.sports)]
+        df = df[(df["start_date"] > self.notes_start_date)] # filter out older activities without injury notes
+        df = df[df["type"].isin(self.sports)]
         df = self.__add_cumulative_features(df)
 
         df.to_pickle(self.injuries_db_path)
